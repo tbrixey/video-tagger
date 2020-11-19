@@ -1,3 +1,7 @@
+# General
+
+This app was bootstrapped from:
+
 <img src="internals/img/erb-banner.png" width="100%" />
 
 <br>
@@ -27,13 +31,9 @@
 
 ## Starting Development
 
-Make sure you have yarn installed `npm i -g yarn`.
+Make sure you have yarn installed. `npm i -g yarn`
 
-Go into the app directory and install everything.
-
-```bash
-yarn
-```
+Go into the app directory and install everything. `yarn install`
 
 Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
 
