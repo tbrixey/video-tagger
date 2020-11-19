@@ -23,11 +23,17 @@
 
 <div align="center">
 
-[![Build Status][github-actions-status]][github-actions-url]
-
 </div>
 
 ## Starting Development
+
+Make sure you have yarn installed `npm i -g yarn`.
+
+Go into the app directory and install everything.
+
+```bash
+yarn
+```
 
 Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
 
@@ -46,5 +52,3 @@ yarn package
 ## Docs
 
 See our [docs and guides here](https://electron-react-boilerplate.js.org/docs/installation)
-
-[github-actions-status]: https://github.com/tbrixey/video-tagger/workflows/Test/badge.svg
