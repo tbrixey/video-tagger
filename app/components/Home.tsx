@@ -1,46 +1,37 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import fs from 'fs';
 import { useDispatch, useSelector } from 'react-redux';
+import { remote } from 'electron';
 import styles from './Home.css';
-import {
-  selectFiles,
-  setFiles,
-  toggleLoading,
-} from '../features/files/filesSlice';
+import { selectFiles, setNewDirectory } from '../features/files/filesSlice';
+
+const { dialog } = remote;
 
 export default function Home(): JSX.Element {
   const dispatch = useDispatch();
   const videoFiles = useSelector(selectFiles);
-  useEffect(() => {
-    fs.readdir(
-      'C:/Users/brixe/Documents/Stream/After Effects/Projects/transition_AME',
-      (err, files) => {
-        console.log(files);
-        const videos = files.filter((file) => {
-          if (file.endsWith('webm')) return true;
-        });
-        dispatch(setFiles(videos));
-        dispatch(toggleLoading());
-      }
-    );
-  }, []);
+  useEffect(() => {}, []);
+
+  const FileBrowser = async () => {
+    const directory = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+    dispatch(setNewDirectory(directory.filePaths[0]));
+  };
 
   return (
     <div className={styles.container} data-tid="container">
       <div>Video Tagger Rx</div>
+      <button onClick={FileBrowser} type="button">
+        Open Folder
+      </button>
       <div className={styles.videoContainer}>
-        {videoFiles.loading && <div>Loading...</div>}
         {videoFiles.data.map((file) => (
           <div key={file} className={styles.videoCard}>
             <div>
               <div>{file}</div>
               <video width="420" height="280" controls preload="metadata">
-                <source
-                  src={`file://C:/Users/brixe/Documents/Stream/After Effects/Projects/transition_AME/${file}#t=1`}
-                  type="video/webm"
-                />
-                <track />
+                <source src={`file://${file}#t=0.1`} />
+                <track default kind="captions" srcLang="en" />
               </video>
             </div>
           </div>
