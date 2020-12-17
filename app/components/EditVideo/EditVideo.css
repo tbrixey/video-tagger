@@ -1,3 +1,22 @@
 video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
+video {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+}
+.videoContainer {
+  padding-bottom: 60%;
+  position: relative;
+}
+
+.list {
+  overflow: auto;
+  height: 100%;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+}

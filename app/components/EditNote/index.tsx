@@ -6,10 +6,11 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   current: boolean;
+  onTimeClick: () => void;
 };
 
 function formatSeconds(sec: string) {
-  return new Date(parseInt(sec) * 1000)
+  return new Date(Number(sec) * 1000)
     .toISOString()
     .substr(11, 8)
     .split(':')
@@ -22,6 +23,7 @@ export default function EditVideo({
   value,
   onChange,
   current,
+  onTimeClick,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +35,9 @@ export default function EditVideo({
 
   return (
     <div className={styles.root}>
-      <div className={styles.time}>{formatSeconds(seconds)}</div>
+      <div className={styles.time} onClick={() => onTimeClick()}>
+        {formatSeconds(seconds)}
+      </div>
       <div className={styles.inputContainer}>
         <input
           className={styles.input}
