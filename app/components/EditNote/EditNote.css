@@ -1,0 +1,28 @@
+.root {
+  border-bottom: 1px solid #ffffff99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input {
+  background: transparent;
+  border: 0;
+  font-size: 14px;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: 0;
+  background: #ffffff22;
+}
+
+.time {
+}
+
+.inputContainer {
+  flex: 1;
+}
