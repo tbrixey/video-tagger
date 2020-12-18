@@ -15,9 +15,9 @@ type NoteState = {
 
 export default function EditVideo({ file, onClose }: Props) {
   const [currentSeconds, setCurrentSeconds] = useState(0);
+  const [loadSeconds, setLoadSeconds] = useState(0);
   const [notes, setNotes] = useState<NoteState>({});
   const [playVideo, setPlayVideo] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const notesList = Object.keys({ [currentSeconds]: '', ...notes });
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export default function EditVideo({ file, onClose }: Props) {
       <VideoPlayer
         play={playVideo}
         file={file}
+        loadSeconds={loadSeconds}
         onLoadedMetadata={(event) => {
           setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
         }}
@@ -65,9 +66,7 @@ export default function EditVideo({ file, onClose }: Props) {
               seconds={sec}
               value={notes[sec]}
               onTimeClick={() => {
-                if (videoRef.current) {
-                  videoRef.current.currentTime = Number(sec);
-                }
+                setLoadSeconds(Number(sec));
               }}
               onKeyUp={(e) => {
                 if (e.key === 'Enter') {
