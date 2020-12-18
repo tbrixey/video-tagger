@@ -7,6 +7,7 @@ type Props = {
   onChange: (value: string) => void;
   current: boolean;
   onTimeClick: () => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 function formatSeconds(sec: string) {
@@ -24,6 +25,7 @@ export default function EditVideo({
   onChange,
   current,
   onTimeClick,
+  onKeyUp,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,6 +47,7 @@ export default function EditVideo({
           ref={inputRef}
           value={value || ''}
           onChange={(e) => onChange(e.currentTarget.value)}
+          onKeyUp={(e) => onKeyUp && onKeyUp(e)}
         />
       </div>
     </div>

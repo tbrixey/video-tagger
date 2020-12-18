@@ -1,23 +1,15 @@
 video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
+video::-webkit-media-controls-timeline::-webkit-media-slider-container {
+  background: red; /* works */
+}
 video {
   width: 100%;
   position: absolute;
   height: 100%;
 }
 .videoContainer {
-  padding-bottom: 60%;
+  padding-bottom: 56.25%;
   position: relative;
-}
-
-.list {
-  overflow: auto;
-  height: 100%;
-}
-
-.root {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }
