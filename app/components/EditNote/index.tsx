@@ -7,7 +7,9 @@ type Props = {
   onChange: (value: string) => void;
   current: boolean;
   onTimeClick: () => void;
-  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  helpText?: string;
+  onFocus?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 function formatSeconds(sec: string) {
@@ -25,18 +27,23 @@ export default function EditVideo({
   onChange,
   current,
   onTimeClick,
-  onKeyUp,
+  onFocus,
+  onKeyDown,
+  helpText,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (current && inputRef.current) {
-      inputRef.current.focus();
+      if (document.activeElement !== inputRef.current) {
+        inputRef.current.focus();
+      }
     }
   }, [current]);
 
   return (
-    <div className={styles.root}>
+    <div className={`${styles.root}`}>
+      <div className={styles.status}>{current && '»'}</div>
       <div className={styles.time} onClick={() => onTimeClick()}>
         {formatSeconds(seconds)}
       </div>
@@ -47,8 +54,10 @@ export default function EditVideo({
           ref={inputRef}
           value={value || ''}
           onChange={(e) => onChange(e.currentTarget.value)}
-          onKeyUp={(e) => onKeyUp && onKeyUp(e)}
+          onKeyDown={(e) => onKeyDown && onKeyDown(e)}
+          onFocus={() => onFocus && onFocus()}
         />
+        {current && <div className={styles.inputHint}>{helpText}</div>}
       </div>
     </div>
   );

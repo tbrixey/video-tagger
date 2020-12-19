@@ -5,6 +5,9 @@
   align-items: center;
 }
 
+.current {
+}
+
 .input {
   background: transparent;
   border: 0;
@@ -28,4 +31,19 @@
 
 .inputContainer {
   flex: 1;
+  position: relative;
+}
+
+.inputHint {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  font-size: 12px;
+  opacity: 0.4;
+  z-index: -1;
+  transform: translateY(-50%);
+}
+
+.status {
+  width: 10px;
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './EditVideo.css';
 import EditNote from '../EditNote';
-import VideoPlayer from '../VideoPlayer';
 import { saveNotes, readNotes } from '../../utils/notes';
 
 type Props = {
@@ -15,9 +14,8 @@ type NoteState = {
 
 export default function EditVideo({ file, onClose }: Props) {
   const [currentSeconds, setCurrentSeconds] = useState(0);
-  const [loadSeconds, setLoadSeconds] = useState(0);
   const [notes, setNotes] = useState<NoteState>({});
-  const [playVideo, setPlayVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const notesList = Object.keys({ [currentSeconds]: '', ...notes });
 
   useEffect(() => {
@@ -30,6 +28,22 @@ export default function EditVideo({ file, onClose }: Props) {
 
   const closeVideo = () => {
     onClose();
+  };
+
+  const togglePlayback = () => {
+    if (videoRef.current?.paused) {
+      videoRef.current?.play();
+    } else {
+      videoRef.current?.pause();
+    }
+  };
+
+  const setToCurrentTime = (sec: string) => {
+    togglePlayback();
+    setCurrentSeconds(Number(sec));
+    if (videoRef && videoRef.current) {
+      videoRef.current.currentTime = Number(sec);
+    }
   };
 
   return (
@@ -46,17 +60,25 @@ export default function EditVideo({ file, onClose }: Props) {
           Close
         </button>
       </div>
-      <VideoPlayer
-        play={playVideo}
-        file={file}
-        loadSeconds={loadSeconds}
-        onLoadedMetadata={(event) => {
-          setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
-        }}
-        onTimeUpdate={(event) => {
-          setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
-        }}
-      />
+      <div className={styles.videoContainer}>
+        <video
+          ref={videoRef}
+          className={styles.video}
+          width="420"
+          height="280"
+          controls
+          preload="metadata"
+          onLoadedMetadata={(event) => {
+            setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
+          }}
+          onTimeUpdate={(event) => {
+            setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
+          }}
+        >
+          <source src={`file://${file}#t=0.1`} />
+          <track default kind="captions" srcLang="en" />
+        </video>
+      </div>
       <form className={styles.list}>
         {notesList.map((sec) => {
           return (
@@ -65,16 +87,15 @@ export default function EditVideo({ file, onClose }: Props) {
               key={sec}
               seconds={sec}
               value={notes[sec]}
-              onTimeClick={() => {
-                setLoadSeconds(Number(sec));
-              }}
-              onKeyUp={(e) => {
+              helpText="↵ to ▶ / ❚❚"
+              onTimeClick={() => setToCurrentTime(sec)}
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  setPlayVideo(!playVideo);
+                  togglePlayback();
                 }
               }}
               onChange={(value) => {
-                setPlayVideo(false);
+                videoRef.current?.pause();
                 setNotes({
                   ...notes,
                   [sec]: value,
