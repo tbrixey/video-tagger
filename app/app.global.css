@@ -11,6 +11,7 @@ body {
   background-color: #111d2e;
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden;
+  margin: 0;
 }
 
 #root {
