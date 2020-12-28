@@ -3,10 +3,11 @@
   position: absolute;
   height: 100%;
   outline: none;
+  object-fit: cover;
 }
 
 .videoContainer {
-  padding-bottom: 56.25%;
+  padding-bottom: 100%;
   position: relative;
   background: #00000033;
   cursor: pointer;

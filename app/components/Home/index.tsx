@@ -5,6 +5,7 @@ import styles from './Home.css';
 import { selectFiles, setNewDirectory } from '../../features/files/filesSlice';
 import EditVideo from '../EditVideo';
 import VideoThumb from '../VideoThumb';
+import Button from '../Button';
 
 const { dialog } = remote;
 
@@ -37,18 +38,16 @@ export default function Home(): JSX.Element {
   return (
     <div className={styles.container} data-tid="container">
       <div>Video Tagger Rx</div>
-      <div className={styles.sidebar}>
-        <button onClick={FileBrowser} type="button">
-          Open Folder
-        </button>
-        {loading && 'Loading...'}
-        <div className={styles.videoContainer}>
-          {videoFiles.data.map((file) => (
-            <div key={file} className={styles.videoCard}>
-              <VideoThumb file={file} onClick={() => setCurrentVideo(file)} />
-            </div>
-          ))}
-        </div>
+      <Button onClick={FileBrowser} type="button">
+        Open Folder
+      </Button>
+      {loading && 'Loading...'}
+      <div className={styles.videoContainer}>
+        {videoFiles.data.map((file) => (
+          <div key={file} className={styles.videoCard}>
+            <VideoThumb file={file} onClick={() => setCurrentVideo(file)} />
+          </div>
+        ))}
       </div>
     </div>
   );

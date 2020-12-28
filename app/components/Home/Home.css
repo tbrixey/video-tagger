@@ -2,6 +2,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .container h2 {
@@ -15,16 +17,13 @@
 .videoContainer {
   display: flex;
   flex-wrap: wrap;
-}
-
-.videoCard {
-  width: 200px;
-  padding: 16px;
-}
-.sidebar {
   overflow: auto;
 }
 
+.videoCard {
+  width: 150px;
+  padding: 8px;
+}
 .main {
   display: flex;
   flex-direction: row;
