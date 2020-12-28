@@ -8,6 +8,8 @@ import VideoThumb from '../VideoThumb';
 
 const { dialog } = remote;
 
+const re = new RegExp('([^/]+$)');
+
 export default function Home(): JSX.Element {
   const dispatch = useDispatch();
   const videoFiles = useSelector(selectFiles);
@@ -44,7 +46,12 @@ export default function Home(): JSX.Element {
         {loading && 'Loading...'}
         <div className={styles.videoContainer}>
           {videoFiles.data.map((file) => (
-            <div key={file} className={styles.videoCard}>
+            <div
+              key={file}
+              className={styles.videoCard}
+              onClick={() => setCurrentVideo(file)}
+            >
+              <div className={styles.videoCardTitle}>{re.exec(file)![0]}</div>
               <VideoThumb file={file} onClick={() => setCurrentVideo(file)} />
             </div>
           ))}

@@ -10,6 +10,7 @@ type Props = {
   helpText?: string;
   onFocus?: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  removeNote: (time: string) => void;
 };
 
 function formatSeconds(sec: string) {
@@ -30,6 +31,7 @@ export default function EditVideo({
   onFocus,
   onKeyDown,
   helpText,
+  removeNote,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,6 +49,7 @@ export default function EditVideo({
       <div className={styles.time} onClick={() => onTimeClick()}>
         {formatSeconds(seconds)}
       </div>
+      {!current && <div onClick={() => removeNote(seconds)}>x</div>}
       <div className={styles.inputContainer}>
         <input
           className={styles.input}

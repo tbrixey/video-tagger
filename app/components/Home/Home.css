@@ -18,9 +18,14 @@
 }
 
 .videoCard {
-  width: 200px;
+  width: 400px;
   padding: 16px;
 }
+.videoCardTitle {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
 .sidebar {
   overflow: auto;
 }
