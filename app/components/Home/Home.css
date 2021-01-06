@@ -21,15 +21,43 @@
 }
 
 .videoCard {
-  width: 150px;
-  padding: 8px;
+  width: 33.3%;
+  padding: 10px;
+  box-sizing: border-box;
 }
+.videoCardTitle {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
 .main {
+  overflow: auto;
+  flex: 1;
+  width: 100%;
+}
+/* .main {
   display: flex;
   flex-direction: row;
   height: 100%;
+} */
+
+.window {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  background: #111d2e;
 }
 
 .workspace {
   flex: 1;
+}
+
+.header {
+  padding: 10px;
+  background: #00000044;
+  width: 100%;
+  box-sizing: border-box;
 }

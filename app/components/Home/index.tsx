@@ -1,54 +1,66 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { remote } from 'electron';
+import { glob } from 'glob';
 import styles from './Home.css';
-import { selectFiles, setNewDirectory } from '../../features/files/filesSlice';
 import EditVideo from '../EditVideo';
 import VideoThumb from '../VideoThumb';
-import Button from '../Button';
 
 const { dialog } = remote;
 
+const re = new RegExp('([^/]+$)');
+
 export default function Home(): JSX.Element {
-  const dispatch = useDispatch();
-  const videoFiles = useSelector(selectFiles);
+  const [videoFiles, setVideoFiles] = useState<string[]>([]);
   const [currentVideo, setCurrentVideo] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {}, []);
 
   const FileBrowser = async () => {
-    setLoading(true);
     const directory = await dialog.showOpenDialog({
       properties: ['openDirectory'],
     });
-    setLoading(false);
-    dispatch(setNewDirectory(directory.filePaths[0]));
+    setLoading(true);
+    glob(`${directory.filePaths[0]}/**/*.{mp4,webm,mov}`, (_err, files) => {
+      setVideoFiles(files);
+      setLoading(false);
+    });
   };
-
-  if (currentVideo) {
-    return (
-      <EditVideo
-        file={currentVideo}
-        onClose={() => setCurrentVideo(undefined)}
-      />
-    );
-  }
 
   return (
     <div className={styles.container} data-tid="container">
-      <div>Video Tagger Rx</div>
-      <Button onClick={FileBrowser} type="button">
-        Open Folder
-      </Button>
-      {loading && 'Loading...'}
-      <div className={styles.videoContainer}>
-        {videoFiles.data.map((file) => (
-          <div key={file} className={styles.videoCard}>
-            <VideoThumb file={file} onClick={() => setCurrentVideo(file)} />
-          </div>
-        ))}
+      <div className={styles.header}>
+        Video Tagger Rx
+        <button onClick={FileBrowser} type="button">
+          Open Folder
+        </button>
       </div>
+      {loading && <>Loading...</>}
+      <div className={styles.main}>
+        <div className={styles.videoContainer}>
+          {videoFiles.map((file) => (
+            <div
+              key={file}
+              className={styles.videoCard}
+              onClick={() => setCurrentVideo(file)}
+            >
+              <VideoThumb
+                fileName={re.exec(file)![0]}
+                file={file}
+                onClick={() => setCurrentVideo(file)}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      {currentVideo && (
+        <div className={styles.window}>
+          <EditVideo
+            file={currentVideo}
+            onClose={() => setCurrentVideo(undefined)}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './EditVideo.css';
 import EditNote from '../EditNote';
 import { saveNotes, readNotes } from '../../utils/notes';
+import { omit } from 'lodash';
 
 type Props = {
   file: string;
@@ -100,6 +101,9 @@ export default function EditVideo({ file, onClose }: Props) {
                   ...notes,
                   [sec]: value,
                 });
+              }}
+              removeNote={(seconds: string) => {
+                setNotes((prevNotes) => omit(prevNotes, [seconds]));
               }}
             />
           );

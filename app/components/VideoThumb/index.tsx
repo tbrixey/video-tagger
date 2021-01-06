@@ -3,10 +3,11 @@ import styles from './VideoThumb.css';
 
 type Props = {
   file: string;
+  fileName?: string;
   onClick: () => void;
 };
 
-export default function VideoThumb({ file, onClick }: Props) {
+export default function VideoThumb({ file, fileName, onClick }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
@@ -24,6 +25,7 @@ export default function VideoThumb({ file, onClick }: Props) {
         <source src={`file://${file}#t=0.1`} />
         <track default kind="captions" srcLang="en" />
       </video>
+      <div className={styles.fileName}>{fileName}</div>
     </div>
   );
 }
