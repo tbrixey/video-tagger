@@ -45,11 +45,23 @@ export default function EditVideo({
 
   return (
     <div className={`${styles.root}`}>
-      <div className={styles.status}>{current && '»'}</div>
+      <div className={styles.status}>
+        {current && (
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
+          </svg>
+        )}
+      </div>
       <div className={styles.time} onClick={() => onTimeClick()}>
         {formatSeconds(seconds)}
       </div>
-      {!current && <div onClick={() => removeNote(seconds)}>x</div>}
+      <div style={{ width: 24, visibility: current ? 'hidden' : 'visible' }}>
+        <div onClick={() => removeNote(seconds)}>
+          <svg width="18" height="18" viewBox="0 0 18 18">
+            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
+          </svg>
+        </div>
+      </div>
       <div className={styles.inputContainer}>
         <input
           className={styles.input}

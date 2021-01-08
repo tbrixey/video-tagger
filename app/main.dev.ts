@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, ipcRenderer } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -73,6 +73,7 @@ const createWindow = async () => {
     height: 728,
     fullscreen: false,
     icon: getAssetPath('icon.png'),
+    titleBarStyle: 'hiddenInset',
     webPreferences:
       (process.env.NODE_ENV === 'development' ||
         process.env.E2E_BUILD === 'true') &&
@@ -107,6 +108,22 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  mainWindow.webContents.on('show-open-dialog', () => {
+    dialog
+      .showOpenDialog({
+        properties: ['openDirectory'],
+      })
+      .then((filePaths) => {
+        if (mainWindow) {
+          mainWindow.webContents.send('open-dialog-paths-selected', filePaths);
+        }
+        return null;
+      })
+      .catch((e) => {
+        throw Error(e);
+      });
+  });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

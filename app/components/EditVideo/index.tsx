@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { omit } from 'lodash';
 import styles from './EditVideo.css';
 import EditNote from '../EditNote';
 import { saveNotes, readNotes } from '../../utils/notes';
-import { omit } from 'lodash';
 
 type Props = {
   file: string;
-  onClose: () => void;
 };
 
 type NoteState = {
   [seconds: string]: string;
 };
 
-export default function EditVideo({ file, onClose }: Props) {
+export default function EditVideo({ file }: Props) {
   const [currentSeconds, setCurrentSeconds] = useState(0);
   const [notes, setNotes] = useState<NoteState>({});
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -23,13 +22,9 @@ export default function EditVideo({ file, onClose }: Props) {
     setNotes(readNotes(file));
   }, [file]);
 
-  const saveNotesToFS = () => {
+  useEffect(() => {
     saveNotes(notes, file);
-  };
-
-  const closeVideo = () => {
-    onClose();
-  };
+  }, [notes, file]);
 
   const togglePlayback = () => {
     if (videoRef.current?.paused) {
@@ -49,18 +44,6 @@ export default function EditVideo({ file, onClose }: Props) {
 
   return (
     <div className={styles.root}>
-      <div>
-        <button
-          type="button"
-          onClick={saveNotesToFS}
-          style={{ marginRight: 8 }}
-        >
-          Save
-        </button>
-        <button type="button" onClick={closeVideo}>
-          Close
-        </button>
-      </div>
       <div className={styles.videoContainer}>
         <video
           ref={videoRef}
