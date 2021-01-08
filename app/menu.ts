@@ -140,8 +140,11 @@ export default class MenuBuilder {
         label: '&File',
         submenu: [
           {
-            label: '&Open',
+            label: '&Open Folder',
             accelerator: 'Ctrl+O',
+            click: () => {
+              this.mainWindow.webContents.emit('show-open-dialog');
+            },
           },
           {
             label: '&Close',
