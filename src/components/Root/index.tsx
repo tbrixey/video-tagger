@@ -131,7 +131,7 @@ export default function Home(): JSX.Element {
           {videoFiles.length > 0 && (
             <OuterSearchContainer>
               <SearchContainer>
-                <SearchForm>
+                <SearchForm action="#">
                   <SearchInput
                     placeholder="Search..."
                     onChange={(e) => handleSearch(e.target.value)}

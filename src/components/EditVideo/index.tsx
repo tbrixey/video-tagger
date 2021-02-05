@@ -96,7 +96,7 @@ export default function EditVideo({ file }: Props) {
           <track default kind="captions" srcLang="en" />
         </Video>
       </VideoContainer>
-      <FormList>
+      <FormList action="#">
         {notesList.map((sec) => {
           return (
             <EditNote
