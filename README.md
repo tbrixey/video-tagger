@@ -1,54 +1,197 @@
-# General
+React-TypeScript-Electron sample with Create React App and Electron Builder
+===========================================================================
 
-This app was bootstrapped from:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) with `--typescript`option.
 
-<img src="internals/img/erb-banner.png" width="100%" />
+On the top of it, the following features have been added with realatively small changes:
 
-<br>
+* TypeScript supports for Electron main process source code
+* Hot-relaod support for Electron app
+* Electron Bulder support
 
-<p>
-  Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a> for rapid application development (HMR).
-</p>
+## Available Scripts in addition to the existing ones
 
-<br>
+### `npm run electron:dev`
 
-<div align="center">
-  <a href="https://facebook.github.io/react/"><img src="./internals/img/react-padded-90.png" /></a>
-  <a href="https://webpack.github.io/"><img src="./internals/img/webpack-padded-90.png" /></a>
-  <a href="https://redux.js.org/"><img src="./internals/img/redux-padded-90.png" /></a>
-  <a href="https://github.com/ReactTraining/react-router"><img src="./internals/img/react-router-padded-90.png" /></a>
-  <a href="https://eslint.org/"><img src="./internals/img/eslint-padded-90.png" /></a>
-  <a href="https://facebook.github.io/jest/"><img src="./internals/img/jest-padded-90.png" /></a>
-  <a href="https://yarnpkg.com/"><img src="./internals/img/yarn-padded-90.png" /></a>
-</div>
+Runs the Electron app in the development mode.
 
-<hr />
-<br />
+The Electron app will reload if you make edits in the `electron` directory.<br>
+You will also see any lint errors in the console.
 
-<div align="center">
+### `npm run electron:build`
 
-</div>
+Builds the Electron app package for production to the `dist` folder.
 
-## Starting Development
+Your Electron app is ready to be distributed!
 
-Make sure you have yarn installed. `npm i -g yarn`
-
-Go into the app directory and install everything. `yarn install`
-
-Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
+## Project directory structure
 
 ```bash
-yarn start
+my-app/
+├── package.json
+│
+## render process
+├── tsconfig.json
+├── public/
+├── src/
+│
+## main process
+├── electron/
+│   ├── main.ts
+│   └── tsconfig.json
+│
+## build output
+├── build/
+│   ├── index.html
+│   ├── static/
+│   │   ├── css/
+│   │   └── js/
+│   │
+│   └── electron/
+│      └── main.js
+│
+## distribution packges
+└── dist/
+    ├── mac/
+    │   └── my-app.app
+    └── my-app-0.1.0.dmg
 ```
 
-## Packaging for Production
+## Do it yourself from scratch
 
-To package apps for the local platform:
+### Generate a React project and install npm dependencies
 
 ```bash
-yarn package
+create-react-app my-app --typescript
+cd my-app
+yarn add @types/electron-devtools-installer electron-devtools-installer electron-is-dev electron-reload
+yarn add -D concurrently electron electron-builder wait-on
 ```
 
-## Docs
+### Make Electron main process source file
 
-See our [docs and guides here](https://electron-react-boilerplate.js.org/docs/installation)
+#### electron/tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "sourceMap": true,
+    "strict": true,
+    "outDir": "../build", // Output transpiled files to build/electron/
+    "rootDir": "../",
+    "noEmitOnError": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  }
+}
+```
+
+#### electron/main.ts
+
+```ts
+import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import * as isDev from 'electron-is-dev';
+import installExtension, { REACT_DEVELOPER_TOOLS } from "electron-devtools-installer";
+
+let win: BrowserWindow | null = null;
+
+function createWindow() {
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+
+  if (isDev) {
+    win.loadURL('http://localhost:3000/index.html');
+  } else {
+    // 'build/index.html'
+    win.loadURL(`file://${__dirname}/../index.html`);
+  }
+
+  win.on('closed', () => win = null);
+
+  // Hot Reloading
+  if (isDev) {
+    // 'node_modules/.bin/electronPath'
+    require('electron-reload')(__dirname, {
+      electron: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
+      forceHardReset: true,
+      hardResetMethod: 'exit'
+    });
+  }
+
+  // DevTools
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
+}
+
+app.on('ready', createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  if (win === null) {
+    createWindow();
+  }
+});
+```
+
+### Adjust package.json
+
+#### Add properties for Electron
+
+```json
+  "homepage": ".", # see https://create-react-app.dev/docs/deployment#serving-the-same-build-from-different-paths
+  "main": "build/electron/main.js",
+```
+
+#### Add properties for Electron Builder
+
+```json
+  "author": "Your Name",
+  "description": "React-TypeScript-Electron sample with Create React App and Electron Builder",
+  ...
+  "build": {
+    "extends": null, # see https://github.com/electron-userland/electron-builder/issues/2030#issuecomment-386720420
+    "files": [
+      "build/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets" # change the resource directory from 'build' to 'assets'
+    }
+  },
+```
+
+#### Add scripts
+
+```json
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "electron:dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
+    "electron:build": "yarn build && tsc -p electron && electron-builder",
+```
+
+## Many thanks to the following articles!
+
+- [⚡️ From React to an Electron app ready for production](https://medium.com/@kitze/%EF%B8%8F-from-react-to-an-electron-app-ready-for-production-a0468ecb1da3)
+- [How to build an Electron app using Create React App and Electron Builder](https://www.codementor.io/randyfindley/how-to-build-an-electron-app-using-create-react-app-and-electron-builder-ss1k0sfer)
+- [Application entry file reset to default (react-cra detected and config changed incorrectly)](https://github.com/electron-userland/electron-builder/issues/2030)
+- [Serving the Same Build from Different Paths](https://create-react-app.dev/docs/deployment#serving-the-same-build-from-different-paths)
+
+## 
