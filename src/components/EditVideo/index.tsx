@@ -108,6 +108,7 @@ export default function EditVideo({ file }: Props) {
               onTimeClick={() => setToCurrentTime(sec)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  e.preventDefault();
                   togglePlayback();
                 }
               }}

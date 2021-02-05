@@ -4,6 +4,7 @@ import EditVideo from "../EditVideo";
 import VideoThumb from "../VideoThumb";
 import styled from "styled-components";
 import "./global.css";
+import { debounce } from "lodash";
 
 const re = new RegExp("([^/]+$)");
 
@@ -22,6 +23,7 @@ const Header = styled.div`
   box-sizing: border-box;
   -webkit-app-region: drag;
   text-align: center;
+  cursor: pointer;
 `;
 
 const Main = styled.div`
@@ -54,8 +56,33 @@ const VideoCard = styled.div`
   box-sizing: border-box;
 `;
 
+const OuterSearchContainer = styled.div`
+  padding: 8px;
+`;
+
+const SearchContainer = styled.div`
+  width: 100%;
+`;
+
+const SearchForm = styled.form`
+  border: 1px solid #00000033;
+  display: flex;
+  padding: 2px;
+`;
+
+const SearchInput = styled.input`
+  padding: 8px;
+  background-color: transparent;
+  color: black;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  border: none;
+`;
+
 export default function Home(): JSX.Element {
   const [videoFiles, setVideoFiles] = useState<string[]>([]);
+  const [searchedString, setSearchedString] = useState("");
   const [openedFolder, setOpenedFolder] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
@@ -81,11 +108,15 @@ export default function Home(): JSX.Element {
     ipcRenderer.send("open-file-dialog");
   };
 
+  const handleSearch = debounce((value: string) => {
+    setSearchedString(value.toLowerCase());
+  }, 100);
+
   return (
     <>
       <Container data-tid="container">
         <Header ref={headerEl} onClick={() => setCurrentVideo(undefined)}>
-          Video Tagger Rx
+          {currentVideo ? "Back" : "Video Tagger Rx"}
         </Header>
         {loading && <>Loading...</>}
         <Main>
@@ -97,16 +128,41 @@ export default function Home(): JSX.Element {
             </div>
           )}
 
+          {videoFiles.length > 0 && (
+            <OuterSearchContainer>
+              <SearchContainer>
+                <SearchForm>
+                  <SearchInput
+                    placeholder="Search..."
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                </SearchForm>
+              </SearchContainer>
+            </OuterSearchContainer>
+          )}
+
           <VideoContainer>
-            {videoFiles.map((file) => (
-              <VideoCard key={file} onClick={() => setCurrentVideo(file)}>
-                <VideoThumb
-                  fileName={re.exec(file)![0]}
-                  file={file}
+            {videoFiles.map((file) => {
+              const fileName = re.exec(file)![0];
+              return (
+                <VideoCard
+                  style={{
+                    display:
+                      file.toLowerCase().indexOf(searchedString) !== -1
+                        ? "block"
+                        : "none",
+                  }}
+                  key={file}
                   onClick={() => setCurrentVideo(file)}
-                />
-              </VideoCard>
-            ))}
+                >
+                  <VideoThumb
+                    fileName={fileName}
+                    file={file}
+                    onClick={() => setCurrentVideo(file)}
+                  />
+                </VideoCard>
+              );
+            })}
           </VideoContainer>
         </Main>
         {currentVideo && (
