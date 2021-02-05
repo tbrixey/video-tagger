@@ -9964,6 +9964,11 @@ react-dom@^16.12.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-hook-inview@^4.3.7:
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/react-hook-inview/-/react-hook-inview-4.3.7.tgz#fa7bb6981145daa7b91a03ab59381e7014327e19"
+  integrity sha512-Ev1dxfq+zCe5ueP7PPk35V6/ElIZX1z5LZ42Li/Ouq0o+yrCbSdztC6E1Mde+GvL2Jsp6yIuCzPA6WomQsb/ZQ==
+
 react-hot-loader@^4.12.21:
   version "4.12.21"
   resolved "https://registry.yarnpkg.com/react-hot-loader/-/react-hot-loader-4.12.21.tgz#332e830801fb33024b5a147d6b13417f491eb975"

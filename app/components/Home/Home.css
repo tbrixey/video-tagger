@@ -30,6 +30,15 @@
   margin-bottom: 4px;
 }
 
+.videoCardTest {
+  width: 33.3%;
+  padding: 10px;
+  box-sizing: border-box;
+  color: #000;
+  word-wrap: break-word;
+  height: 250px;
+}
+
 .main {
   overflow: auto;
   flex: 1;
@@ -64,4 +73,33 @@
   box-sizing: border-box;
   -webkit-app-region: drag;
   text-align: center;
+  cursor: pointer;
+}
+
+.outerSearchContainer {
+  padding: 8px;
+}
+
+.searchContainer {
+  width: 100%;
+}
+
+.searchContainer form {
+  border: 1px solid #00000033;
+  display: flex;
+  padding: 2px;
+}
+
+.searchContainer input {
+  padding: 8px;
+  background-color: transparent;
+  color: black;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  border: none;
+}
+
+.searchContainer input:focus {
+  outline: none;
 }

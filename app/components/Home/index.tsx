@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { remote, ipcRenderer } from 'electron';
 import { glob } from 'glob';
+import { debounce } from 'lodash';
 import styles from './Home.css';
 import EditVideo from '../EditVideo';
 import VideoThumb from '../VideoThumb';
@@ -8,7 +9,9 @@ import VideoThumb from '../VideoThumb';
 const re = new RegExp('([^/]+$)');
 
 export default function Home(): JSX.Element {
+  const [hideThumbs, setHideThumbs] = useState(false);
   const [videoFiles, setVideoFiles] = useState<string[]>([]);
+  const [searchedString, setSearchedString] = useState<string>('');
   const [openedFolder, setOpenedFolder] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
@@ -38,6 +41,10 @@ export default function Home(): JSX.Element {
     remote.getCurrentWindow().webContents.emit('show-open-dialog');
   };
 
+  const handleSearch = debounce((value: string) => {
+    setSearchedString(value.toLowerCase());
+  }, 100);
+
   return (
     <div className={styles.container} data-tid="container">
       <div
@@ -45,7 +52,7 @@ export default function Home(): JSX.Element {
         ref={headerEl}
         onClick={() => setCurrentVideo(undefined)}
       >
-        Video Tagger Rx
+        {currentVideo ? 'Back' : 'Video Tagger Rx'}
       </div>
       {loading && <>Loading...</>}
       <div className={styles.main}>
@@ -57,20 +64,51 @@ export default function Home(): JSX.Element {
           </div>
         )}
 
-        <div className={styles.videoContainer}>
-          {videoFiles.map((file) => (
-            <div
-              key={file}
-              className={styles.videoCard}
-              onClick={() => setCurrentVideo(file)}
-            >
-              <VideoThumb
-                fileName={re.exec(file)![0]}
-                file={file}
-                onClick={() => setCurrentVideo(file)}
-              />
+        {videoFiles.length > 0 && (
+          <div className={styles.outerSearchContainer}>
+            <div className={styles.searchContainer}>
+              <form>
+                <input
+                  placeholder="Search..."
+                  onChange={(e) => handleSearch(e.target.value)}
+                />
+              </form>
             </div>
-          ))}
+          </div>
+        )}
+
+        <div className={styles.videoContainer}>
+          {videoFiles.map((file) => {
+            const fileName = re.exec(file)![0];
+            return (
+              <div
+                key={file}
+                className={styles.videoCard}
+                onClick={() => setCurrentVideo(file)}
+                style={{
+                  display:
+                    file.toLowerCase().indexOf(searchedString) !== -1
+                      ? 'block'
+                      : 'none',
+                }}
+              >
+                {hideThumbs ? (
+                  <div
+                    onClick={() => setCurrentVideo(file)}
+                    style={{ wordBreak: 'break-all', color: '#000' }}
+                  >
+                    {fileName}
+                  </div>
+                ) : (
+                  <VideoThumb
+                    fileName={fileName}
+                    file={file}
+                    onClick={() => setCurrentVideo(file)}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
       {currentVideo && (
