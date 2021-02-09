@@ -1,62 +1,62 @@
-import React, { useRef } from "react";
-import styled from "styled-components";
+import React, { useEffect, useRef, useState } from "react";
+import { ButtonBase } from "@material-ui/core";
+import Image from "material-ui-image";
 
 type Props = {
   file: string;
-  fileName?: string;
   onClick: () => void;
 };
 
-const VideoContainer = styled.div`
-  padding-bottom: 100%;
-  position: relative;
-  background: #00000033;
-  cursor: pointer;
-  border-radius: 10px;
-  overflow: hidden;
-  &:hover {
-    opacity: 0.8;
-    box-shadow: 2px 2px 6px #00000033;
-  }
-`;
-
-const Video = styled.video`
-  width: 100%;
-  position: absolute;
-  height: 100%;
-  outline: none;
-  object-fit: cover;
-`;
-
-const Filename = styled.div`
-  background: #00000055;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 2px 6px;
-  color: white;
-  font-size: 9px;
-`;
-
-export default function VideoThumb({ file, fileName, onClick }: Props) {
+export function VideoThumb({ file, onClick }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [metadataLoaded, setMetadataLoaded] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [suspended, setSuspended] = useState(false);
+  const [seeked, setSeeked] = useState(false);
+  const [image, setImage] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (metadataLoaded && videoRef && videoRef.current) {
+      const video = videoRef.current;
+      video.currentTime = 0;
+      var canvas = document.createElement("canvas");
+      console.log(video.videoWidth, video.videoHeight);
+      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth;
+      var ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      }
+      const imgData = canvas.toDataURL();
+      if (imgData && imgData !== "data:,") {
+        setImage(imgData);
+      }
+    }
+  }, [metadataLoaded, dataLoaded, suspended, videoRef, seeked]);
 
   return (
-    <VideoContainer
-      onMouseOver={() => {
-        videoRef.current?.play();
-      }}
-      onMouseOut={() => {
-        videoRef.current?.pause();
-      }}
-      onClick={onClick}
-    >
-      <Video ref={videoRef} width="100" height="100" muted>
-        <source src={`safe-file-protocol://${file}`} />
-        <track default kind="captions" srcLang="en" />
-      </Video>
-      <Filename>{fileName}</Filename>
-    </VideoContainer>
+    <ButtonBase onClick={onClick}>
+      <Image
+        disableSpinner
+        src={image || process.env.PUBLIC_URL + "/empty.png"}
+        alt=""
+        cover
+        style={{ width: 50, paddingTop: "calc(70%)" }}
+      />
+      <video
+        style={{
+          position: "absolute",
+          top: "-9999em",
+        }}
+        muted
+        className="snapshot-generator"
+        ref={videoRef}
+        src={`safe-file-protocol://${file}`}
+        onLoadedMetadata={() => setMetadataLoaded(true)}
+        onLoadedData={() => setDataLoaded(dataLoaded)}
+        onSuspend={() => setSuspended(suspended)}
+        onSeeked={() => setSeeked(true)}
+      ></video>
+    </ButtonBase>
   );
 }
