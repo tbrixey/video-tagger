@@ -16,6 +16,7 @@ const Main = styled.div`
   padding: 70px 10px 10px;
   position: relative;
   z-index: 1;
+  height: 100%;
 `;
 
 export default function Root(): JSX.Element {

@@ -16,10 +16,15 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  flex-flow: column nowrap;
+`;
+
+const Section = styled.div`
+  flex: 0 0 50%;
 `;
 
 const VideoContainer = styled.div`
-  padding-bottom: 56.25%;
+  height: 100%;
   position: relative;
 `;
 
@@ -77,55 +82,59 @@ export default function EditVideo({ file }: Props) {
 
   return (
     <Container>
-      <VideoContainer>
-        <Video
-          ref={videoRef}
-          width="420"
-          height="280"
-          controls
-          muted
-          preload="metadata"
-          onLoadedMetadata={(event) => {
-            setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
-          }}
-          onTimeUpdate={(event) => {
-            setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
-          }}
-        >
-          <source src={`safe-file-protocol://${file}`} />
-          <track default kind="captions" srcLang="en" />
-        </Video>
-      </VideoContainer>
-      <FormList action="#">
-        {notesList.map((sec) => {
-          return (
-            <EditNote
-              current={currentSeconds === Number(sec)}
-              key={sec}
-              seconds={sec}
-              value={notes[sec]}
-              helpText="↵ to ▶ / ❚❚"
-              onTimeClick={() => setToCurrentTime(sec)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  togglePlayback();
-                }
-              }}
-              onChange={(value) => {
-                videoRef.current?.pause();
-                setNotes({
-                  ...notes,
-                  [sec]: value,
-                });
-              }}
-              removeNote={(seconds: string) => {
-                setNotes((prevNotes) => omit(prevNotes, [seconds]));
-              }}
-            />
-          );
-        })}
-      </FormList>
+      <Section>
+        <VideoContainer>
+          <Video
+            ref={videoRef}
+            width="420"
+            height="280"
+            controls
+            muted
+            preload="metadata"
+            onLoadedMetadata={(event) => {
+              setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
+            }}
+            onTimeUpdate={(event) => {
+              setCurrentSeconds(Math.floor(event.currentTarget.currentTime));
+            }}
+          >
+            <source src={`safe-file-protocol://${file}`} />
+            <track default kind="captions" srcLang="en" />
+          </Video>
+        </VideoContainer>
+      </Section>
+      <Section>
+        <FormList action="#">
+          {notesList.map((sec) => {
+            return (
+              <EditNote
+                current={currentSeconds === Number(sec)}
+                key={sec}
+                seconds={sec}
+                value={notes[sec]}
+                helpText="↵ to ▶ / ❚❚"
+                onTimeClick={() => setToCurrentTime(sec)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    togglePlayback();
+                  }
+                }}
+                onChange={(value) => {
+                  videoRef.current?.pause();
+                  setNotes({
+                    ...notes,
+                    [sec]: value,
+                  });
+                }}
+                removeNote={(seconds: string) => {
+                  setNotes((prevNotes) => omit(prevNotes, [seconds]));
+                }}
+              />
+            );
+          })}
+        </FormList>
+      </Section>
     </Container>
   );
 }

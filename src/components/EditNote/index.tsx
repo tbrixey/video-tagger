@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import ArrowIcon from "@material-ui/icons/ArrowRight";
+import DeleteIcon from "@material-ui/icons/RemoveCircleOutline";
+import { IconButton, InputBase } from "@material-ui/core";
 
 type Props = {
   seconds: string;
@@ -9,7 +12,9 @@ type Props = {
   onTimeClick: () => void;
   helpText?: string;
   onFocus?: () => void;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (
+    e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => void;
   removeNote: (time: string) => void;
 };
 
@@ -28,28 +33,19 @@ const Root = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const Status = styled.div`
-  width: 10px;
-`;
 const Time = styled.div`
-  padding-left: 10px;
-  padding-right: 10px;
   cursor: pointer;
 `;
 const InputContainer = styled.div`
   flex: 1;
   position: relative;
 `;
-const Input = styled.input`
-  background: transparent;
-  border: 0;
+const Input = styled(InputBase)`
   font-size: 14px;
-  color: white;
-  width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  &:focus {
-    outline: 0;
+  input {
+    padding: 10px 10px 10px 100px;
+  }
+  input:focus {
     background: #ffffff22;
   }
 `;
@@ -86,29 +82,38 @@ export default function EditVideo({
 
   return (
     <Root>
-      <Status>
-        {current && (
-          <svg width="18" height="18" viewBox="0 0 18 18">
-            <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
-          </svg>
-        )}
-      </Status>
-      <Time onClick={() => onTimeClick()}>{formatSeconds(seconds)}</Time>
-      <div
-        style={{
-          width: 24,
-          visibility: current ? "hidden" : "visible",
-          cursor: "pointer",
-        }}
-      >
-        <div onClick={() => removeNote(seconds)}>
-          <svg width="18" height="18" viewBox="0 0 18 18">
-            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-          </svg>
-        </div>
-      </div>
       <InputContainer>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 2,
+            display: "flex",
+            bottom: 0,
+            alignItems: "center",
+          }}
+        >
+          <ArrowIcon style={{ visibility: current ? "visible" : "hidden" }} />
+          <Time onClick={() => onTimeClick()}>{formatSeconds(seconds)}</Time>
+          <div
+            style={{
+              width: 30,
+              visibility: current ? "hidden" : "visible",
+              cursor: "pointer",
+            }}
+          >
+            <IconButton
+              color="secondary"
+              size="small"
+              onClick={() => removeNote(seconds)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        </div>
         <Input
+          fullWidth
           type="text"
           ref={inputRef}
           value={value || ""}
