@@ -3,6 +3,8 @@ import { omit } from "lodash";
 import EditNote from "../EditNote";
 import { saveNotes, readNotes } from "../../utils/notes";
 import styled from "styled-components";
+import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
+import { playbackSpeeds } from "./constants";
 
 type Props = {
   file: string;
@@ -19,8 +21,16 @@ const Container = styled.div`
   flex-flow: column nowrap;
 `;
 
-const Section = styled.div`
-  flex: 0 0 50%;
+const TopSection = styled.div`
+  flex: 0 0 6%;
+`;
+
+const VideoSection = styled.div`
+  flex: 0 0 54%;
+`;
+
+const NotesSection = styled.div`
+  flex: 0 0 40%;
 `;
 
 const VideoContainer = styled.div`
@@ -80,9 +90,35 @@ export default function EditVideo({ file }: Props) {
     }
   };
 
+  const setPlaybackSpeed = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    const playBackSpeed: any = event.target.value;
+    if (videoRef && videoRef.current) {
+      videoRef.current.playbackRate = playBackSpeed;
+    }
+  };
+
   return (
     <Container>
-      <Section>
+      <TopSection>
+        <FormControl>
+          <InputLabel>Playback Speed</InputLabel>
+          <Select
+            style={{ width: 120 }}
+            defaultValue={1}
+            onChange={setPlaybackSpeed}
+          >
+            {playbackSpeeds.map((speed) => (
+              <MenuItem value={speed}>{speed}x</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </TopSection>
+      <VideoSection>
         <VideoContainer>
           <Video
             ref={videoRef}
@@ -102,8 +138,8 @@ export default function EditVideo({ file }: Props) {
             <track default kind="captions" srcLang="en" />
           </Video>
         </VideoContainer>
-      </Section>
-      <Section>
+      </VideoSection>
+      <NotesSection>
         <FormList action="#">
           {notesList.map((sec) => {
             return (
@@ -134,7 +170,7 @@ export default function EditVideo({ file }: Props) {
             );
           })}
         </FormList>
-      </Section>
+      </NotesSection>
     </Container>
   );
 }
