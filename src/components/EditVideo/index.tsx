@@ -2,11 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { omit } from "lodash";
 import EditNote from "../EditNote";
 import { saveNotes, readNotes } from "../../utils/notes";
-import styled from "styled-components";
-import { Button, Slider, Tooltip, withStyles } from "@material-ui/core";
-import { formatSeconds } from "../../utils/formatSeconds";
-import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  makeStyles,
+} from "@material-ui/core";
 import { playbackSpeeds } from "./constants";
+import { VideoProgressBar } from "../VideoProgressBar";
+import { Video } from "./Video";
 
 type Props = {
   file: string;
@@ -16,85 +21,34 @@ type NoteState = {
   [seconds: string]: string;
 };
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  flex-flow: column nowrap;
-`;
-
-const TopSection = styled.div`
-  flex: 0 0 6%;
-`;
-
-const VideoSection = styled.div`
-  flex: 1;
-`;
-
-const NotesSection = styled.div`
-  flex: 1;
-  position: relative;
-`;
-
-const VideoContainer = styled.div`
-  height: 100%;
-  position: relative;
-`;
-
-const Video = styled.video`
-  width: 100%;
-  position: absolute;
-  height: 100%;
-  outline: none;
-  &::-webkit-media-controls-fullscreen-button {
-    display: none;
-  }
-  &::-webkit-media-controls-timeline::-webkit-media-slider-container {
-    background: red; /* works */
-  }
-  &::-webkit-media-controls-panel {
-    display: flex !important;
-    opacity: 1 !important;
-  }
-`;
-
-const TrackSlider = withStyles({
+const useStyles = makeStyles({
   root: {
-    height: 2,
-    padding: "15px 0",
-    background: "rgba(255,255,255,.15)",
-    boxShadow: "inset 0 0 14px rgba(0,0,0,.2)",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+    flexFlow: "column nowrap",
   },
-  valueLabel: {
-    left: "calc(-50% + 12px)",
-    top: -22,
-    "& *": {
-      background: "transparent",
-      color: "#000",
-    },
+  topSection: {
+    flex: "0 0 6%",
   },
-  track: {
-    height: 2,
+  videoSection: {
+    flex: 1,
   },
-  rail: {
-    height: 2,
-    opacity: 0.5,
-    backgroundColor: "#bfbfbf",
+  notesSection: {
+    flex: 1,
+    position: "relative",
   },
-  mark: {
-    backgroundColor: "#bfbfbf",
-    height: 8,
-    width: 1,
-    marginTop: -3,
+  videoContainer: {
+    height: "100%",
+    position: "relative",
   },
-  markActive: {
-    opacity: 1,
-    backgroundColor: "currentColor",
+  form: {
+    height: "100%",
+    overflow: "auto",
+    width: "100%",
+    position: "absolute",
   },
-  marked: {
-    marginBottom: 0,
-  },
-})(Slider);
+});
 
 export default function EditVideo({ file }: Props) {
   const [currentSeconds, setCurrentSeconds] = useState(0);
@@ -102,6 +56,7 @@ export default function EditVideo({ file }: Props) {
   const [duration, setDuration] = useState<number | undefined>();
   const videoRef = useRef<HTMLVideoElement>(null);
   const notesList = Object.keys({ [currentSeconds]: "", ...notes });
+  const classes = useStyles();
 
   useEffect(() => {
     setNotes(readNotes(file));
@@ -140,8 +95,8 @@ export default function EditVideo({ file }: Props) {
   };
 
   return (
-    <Container>
-      <TopSection>
+    <div className={classes.root}>
+      <div className={classes.topSection}>
         <FormControl>
           <InputLabel>Playback Speed</InputLabel>
           <Select
@@ -154,9 +109,9 @@ export default function EditVideo({ file }: Props) {
             ))}
           </Select>
         </FormControl>
-      </TopSection>
-      <VideoSection>
-        <VideoContainer>
+      </div>
+      <div className={classes.videoSection}>
+        <div className={classes.videoContainer}>
           <Video
             ref={videoRef}
             width="420"
@@ -175,9 +130,9 @@ export default function EditVideo({ file }: Props) {
             <source src={`safe-file-protocol://${file}`} />
             <track default kind="captions" srcLang="en" />
           </Video>
-        </VideoContainer>
-      </VideoSection>
-      <TrackSlider
+        </div>
+      </div>
+      <VideoProgressBar
         color="secondary"
         getAriaValueText={(v) => `%${v}`}
         valueLabelDisplay="off"
@@ -205,16 +160,8 @@ export default function EditVideo({ file }: Props) {
           // ),
         }))}
       />
-      <NotesSection>
-        <form
-          action="#"
-          style={{
-            height: "100%",
-            overflow: "auto",
-            width: "100%",
-            position: "absolute",
-          }}
-        >
+      <div className={classes.notesSection}>
+        <form action="#" className={classes.form}>
           {notesList.map((sec) => {
             return (
               <EditNote
@@ -244,7 +191,7 @@ export default function EditVideo({ file }: Props) {
             );
           })}
         </form>
-      </NotesSection>
-    </Container>
+      </div>
+    </div>
   );
 }
