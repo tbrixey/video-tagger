@@ -66,7 +66,9 @@ export default function Root(): JSX.Element {
         {loading ? (
           "Loading Files..."
         ) : (
-          <div style={{ display: currentVideo ? "none" : "block" }}>
+          <div
+            style={{ display: currentVideo ? "none" : "block", height: "100%" }}
+          >
             <FileBrowser
               files={videoFiles}
               onFileClick={(file) => setCurrentVideo(file)}

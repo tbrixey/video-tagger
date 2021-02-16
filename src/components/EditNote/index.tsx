@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ArrowIcon from "@material-ui/icons/ArrowRight";
 import DeleteIcon from "@material-ui/icons/RemoveCircleOutline";
 import { IconButton, InputBase } from "@material-ui/core";
+import { formatSeconds } from "../../utils/formatSeconds";
 
 type Props = {
   seconds: string;
@@ -17,15 +18,6 @@ type Props = {
   ) => void;
   removeNote: (time: string) => void;
 };
-
-function formatSeconds(sec: string) {
-  return new Date(Number(sec) * 1000)
-    .toISOString()
-    .substr(11, 8)
-    .split(":")
-    .filter((v, i) => v !== "00" || i > 0)
-    .join(":");
-}
 
 const Root = styled.div`
   border-bottom: 1px solid #ffffff99;

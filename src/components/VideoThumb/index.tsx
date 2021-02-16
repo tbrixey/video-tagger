@@ -44,20 +44,26 @@ export function VideoThumb({ file, onClick }: Props) {
         cover
         style={{ width: 50, paddingTop: "calc(70%)" }}
       />
-      <video
+      <div
         style={{
           position: "absolute",
           top: "-9999em",
+          overflow: "hidden",
+          width: 1,
+          height: 1,
         }}
-        muted
-        className="snapshot-generator"
-        ref={videoRef}
-        src={`safe-file-protocol://${file}`}
-        onLoadedMetadata={() => setMetadataLoaded(true)}
-        onLoadedData={() => setDataLoaded(dataLoaded)}
-        onSuspend={() => setSuspended(suspended)}
-        onSeeked={() => setSeeked(true)}
-      ></video>
+      >
+        <video
+          muted
+          className="snapshot-generator"
+          ref={videoRef}
+          src={`safe-file-protocol://${file}`}
+          onLoadedMetadata={() => setMetadataLoaded(true)}
+          onLoadedData={() => setDataLoaded(dataLoaded)}
+          onSuspend={() => setSuspended(suspended)}
+          onSeeked={() => setSeeked(true)}
+        ></video>
+      </div>
     </ButtonBase>
   );
 }

@@ -8,3 +8,7 @@ img {
   width: 100%;
   height: auto;
 }
+
+video::-webkit-media-controls-timeline {
+  display: none;
+}
