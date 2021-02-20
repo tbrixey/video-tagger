@@ -3,7 +3,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { playbackSpeeds } from "./constants";
 import SpeedIcon from "@material-ui/icons/Speed";
-import { IconButton, Box } from "@material-ui/core";
+import { IconButton, Box, SvgIcon } from "@material-ui/core";
+import { mdiPlaySpeed } from "@mdi/js";
 
 type Props = {
   initialSpeed?: number;
@@ -25,7 +26,9 @@ export function PlaybackMenu({ initialSpeed, onChange }: Props) {
   return (
     <Box ml={1}>
       <IconButton onClick={handleClick}>
-        <SpeedIcon fontSize="small" />
+        <SvgIcon>
+          <path d={mdiPlaySpeed}></path>
+        </SvgIcon>
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         {playbackSpeeds.map((s) => (
