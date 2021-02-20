@@ -2,16 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { omit } from "lodash";
 import EditNote from "../EditNote";
 import { saveNotes, readNotes } from "../../utils/notes";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  makeStyles,
-} from "@material-ui/core";
-import { playbackSpeeds } from "./constants";
+import { Divider, makeStyles } from "@material-ui/core";
 import { VideoProgressBar } from "../VideoProgressBar";
 import { Video } from "./Video";
+import { PlaybackMenu } from "./PlaybackMenu";
 
 type Props = {
   file: string;
@@ -27,9 +21,6 @@ const useStyles = makeStyles({
     flexDirection: "column",
     height: "100%",
     flexFlow: "column nowrap",
-  },
-  topSection: {
-    flex: "0 0 6%",
   },
   videoSection: {
     flex: 1,
@@ -75,20 +66,16 @@ export default function EditVideo({ file }: Props) {
   };
 
   const setToCurrentTime = (sec: string) => {
-    togglePlayback();
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
     setCurrentSeconds(Number(sec));
     if (videoRef && videoRef.current) {
       videoRef.current.currentTime = Number(sec);
     }
   };
 
-  const setPlaybackSpeed = (
-    event: React.ChangeEvent<{
-      name?: string | undefined;
-      value: unknown;
-    }>
-  ) => {
-    const playBackSpeed: any = event.target.value;
+  const setPlaybackSpeed = (playBackSpeed: number) => {
     if (videoRef && videoRef.current) {
       videoRef.current.playbackRate = playBackSpeed;
     }
@@ -96,20 +83,6 @@ export default function EditVideo({ file }: Props) {
 
   return (
     <div className={classes.root}>
-      <div className={classes.topSection}>
-        <FormControl>
-          <InputLabel>Playback Speed</InputLabel>
-          <Select
-            style={{ width: 120 }}
-            defaultValue={1}
-            onChange={setPlaybackSpeed}
-          >
-            {playbackSpeeds.map((speed) => (
-              <MenuItem value={speed}>{speed}x</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
       <div className={classes.videoSection}>
         <div className={classes.videoContainer}>
           <Video
@@ -132,34 +105,41 @@ export default function EditVideo({ file }: Props) {
           </Video>
         </div>
       </div>
-      <VideoProgressBar
-        color="secondary"
-        getAriaValueText={(v) => `%${v}`}
-        valueLabelDisplay="off"
-        value={videoRef.current?.currentTime || 0}
-        onChange={(_e, value) => {
-          if (videoRef && videoRef.current && typeof value === "number") {
-            videoRef.current.currentTime = value;
-          }
-        }}
-        min={0}
-        max={duration}
-        marks={notesList.map((sec) => ({
-          value: parseInt(sec),
-          // label: (
-          //   <Tooltip title={formatSeconds(sec)}>
-          //     <div
-          //       style={{
-          //         width: 4,
-          //         height: 4,
-          //         background: "red",
-          //         borderRadius: "50%",
-          //       }}
-          //     />
-          //   </Tooltip>
-          // ),
-        }))}
-      />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <VideoProgressBar
+          color="secondary"
+          getAriaValueText={(v) => `%${v}`}
+          valueLabelDisplay="off"
+          value={videoRef.current?.currentTime || 0}
+          onChange={(_e, value) => {
+            if (videoRef && videoRef.current && typeof value === "number") {
+              videoRef.current.currentTime = value;
+            }
+          }}
+          min={0}
+          max={duration}
+          marks={notesList.map((sec) => ({
+            value: parseInt(sec),
+            // label: (
+            //   <Tooltip title={formatSeconds(sec)}>
+            //     <div
+            //       style={{
+            //         width: 4,
+            //         height: 4,
+            //         background: "red",
+            //         borderRadius: "50%",
+            //       }}
+            //     />
+            //   </Tooltip>
+            // ),
+          }))}
+        />
+        <PlaybackMenu
+          initialSpeed={videoRef.current?.playbackRate || 1}
+          onChange={(s) => setPlaybackSpeed(s)}
+        />
+      </div>
+      <Divider />
       <div className={classes.notesSection}>
         <form action="#" className={classes.form}>
           {notesList.map((sec) => {
@@ -170,7 +150,18 @@ export default function EditVideo({ file }: Props) {
                 seconds={sec}
                 value={notes[sec]}
                 helpText="↵ to ▶ / ❚❚"
-                onTimeClick={() => setToCurrentTime(sec)}
+                onTimeClick={() => {
+                  setToCurrentTime(sec);
+                  // setTimeout(() => {
+                  //   if (videoRef.current) {
+                  //     const imageData = getImageDataFromVideo(videoRef.current);
+                  //     const element = document.createElement("a");
+                  //     element.href = imageData;
+                  //     element.download = "test.png";
+                  //     element.click();
+                  //   }
+                  // }, 1000);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();

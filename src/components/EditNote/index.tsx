@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import ArrowIcon from "@material-ui/icons/ArrowRight";
-import DeleteIcon from "@material-ui/icons/RemoveCircleOutline";
-import { IconButton, InputBase } from "@material-ui/core";
+import { IconButton, InputBase, Menu, MenuItem } from "@material-ui/core";
 import { formatSeconds } from "../../utils/formatSeconds";
+import MenuIcon from "@material-ui/icons/MoreVert";
 
 type Props = {
   seconds: string;
@@ -31,11 +31,13 @@ const Time = styled.div`
 const InputContainer = styled.div`
   flex: 1;
   position: relative;
+  display: flex;
+  align-items: center;
 `;
 const Input = styled(InputBase)`
   font-size: 14px;
   input {
-    padding: 10px 10px 10px 100px;
+    padding: 10px 10px 10px 70px;
   }
   input:focus {
     background: #ffffff22;
@@ -63,6 +65,7 @@ export default function EditVideo({
   removeNote,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (current && inputRef.current) {
@@ -71,6 +74,14 @@ export default function EditVideo({
       }
     }
   }, [current]);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   return (
     <Root>
@@ -88,21 +99,6 @@ export default function EditVideo({
         >
           <ArrowIcon style={{ visibility: current ? "visible" : "hidden" }} />
           <Time onClick={() => onTimeClick()}>{formatSeconds(seconds)}</Time>
-          <div
-            style={{
-              width: 30,
-              visibility: current ? "hidden" : "visible",
-              cursor: "pointer",
-            }}
-          >
-            <IconButton
-              color="secondary"
-              size="small"
-              onClick={() => removeNote(seconds)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </div>
         </div>
         <Input
           fullWidth
@@ -114,6 +110,25 @@ export default function EditVideo({
           onFocus={() => onFocus && onFocus()}
         />
         {current && <InputHint>{helpText}</InputHint>}
+        <div style={{ visibility: current ? "hidden" : "visible" }}>
+          <IconButton onClick={handleClick} size="small">
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem
+              onClick={() => {
+                removeNote(seconds);
+                handleClose();
+              }}
+            >
+              Delete
+            </MenuItem>
+          </Menu>
+        </div>
       </InputContainer>
     </Root>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonBase } from "@material-ui/core";
 import Image from "material-ui-image";
+import { getImageDataFromVideo } from "../../utils/getImageDataFromVideo";
 
 type Props = {
   file: string;
@@ -17,18 +18,8 @@ export function VideoThumb({ file, onClick }: Props) {
 
   useEffect(() => {
     if (metadataLoaded && videoRef && videoRef.current) {
-      const video = videoRef.current;
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      video.currentTime = 0;
-      canvas.height = video.videoHeight;
-      canvas.width = video.videoWidth;
-
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      }
-      const imgData = canvas.toDataURL();
+      videoRef.current.currentTime = 0;
+      const imgData = getImageDataFromVideo(videoRef.current);
       if (imgData && imgData !== "data:,") {
         setImage(imgData);
       }

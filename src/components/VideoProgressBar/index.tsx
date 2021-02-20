@@ -4,8 +4,6 @@ export const VideoProgressBar = withStyles({
   root: {
     height: 2,
     padding: "15px 0",
-    background: "rgba(255,255,255,.15)",
-    boxShadow: "inset 0 0 14px rgba(0,0,0,.2)",
   },
   valueLabel: {
     left: "calc(-50% + 12px)",
