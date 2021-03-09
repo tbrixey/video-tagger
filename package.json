@@ -1,6 +1,6 @@
 {
   "name": "video-tagger-rx",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "author": "Your Name",
   "description": "Video Tagger Rx",
   "homepage": ".",
@@ -19,6 +19,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-is-dev": "^1.2.0",
     "electron-reload": "^1.5.0",
+    "electron-updater": "^4.3.8",
     "fs": "^0.0.1-security",
     "glob": "^7.1.6",
     "lodash": "^4.17.20",
@@ -38,15 +39,22 @@
     "electron:dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "electron:windev": "concurrently \"SET BROWSER=none && yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "electron:build": "yarn build && tsc -p electron && electron-builder",
+    "electron:publish": "electron-builder -p onTag",
     "eject": "react-scripts eject"
   },
   "build": {
+    "appId": "com.video-tagger-rx.app",
     "extends": null,
     "files": [
       "build/**/*"
     ],
     "directories": {
       "buildResources": "assets"
+    },
+    "win": {
+      "publish": [
+        "github"
+      ]
     }
   },
   "eslintConfig": {
