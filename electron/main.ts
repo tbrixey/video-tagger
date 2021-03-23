@@ -68,7 +68,9 @@ function createWindow() {
     }
   });
 
-  autoUpdater.checkForUpdatesAndNotify();
+  if (!isDev) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 }
 
 app.on("ready", createWindow);
