@@ -39,8 +39,8 @@
     "postinstall": "electron-builder install-app-deps",
     "electron:dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
     "electron:windev": "concurrently \"SET BROWSER=none && yarn start\" \"wait-on http://localhost:3000 && tsc -p electron -w\" \"wait-on http://localhost:3000 && tsc -p electron && electron .\"",
-    "electron:build": "yarn build && tsc -p electron && electron-builder build",
-    "electron:publish": "electron-builder -p onTag",
+    "electron:build": "yarn build && tsc -p electron && electron-builder -p always",
+    "electron:localbuild": "yarn build && tsc -p electron && electron-builder build",
     "eject": "react-scripts eject"
   },
   "build": {
