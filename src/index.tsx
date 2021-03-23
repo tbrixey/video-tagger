@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import Root from "./components/Root";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+
 import "./global.css";
 
 const theme = createMuiTheme({
