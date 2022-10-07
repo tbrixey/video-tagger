@@ -1,7 +1,7 @@
 {
   "name": "video-tagger-rx",
   "version": "0.0.4",
-  "author": "Trevor and Deric",
+  "author": "Trevor Brixey",
   "description": "Video Tagger Rx",
   "homepage": ".",
   "main": "build/electron/main.js",
