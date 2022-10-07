@@ -79,7 +79,12 @@ export function FileBrowser({ files, onFileClick, filterString = "" }: Props) {
                       onClick={() => onFileClick && onFileClick(file)}
                     />
                   </TableCell>
-                  <TableCell>{fileName}</TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onFileClick && onFileClick(file)}
+                  >
+                    {fileName}
+                  </TableCell>
                   <TableCell style={{ whiteSpace: "nowrap" }}>
                     {date.toLocaleString()}
                   </TableCell>
